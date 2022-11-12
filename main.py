@@ -1,11 +1,11 @@
 """———————————————————————————————————————
     Clase inicializadora del proyecto.
 ———————————————————————————————————————"""
-from controles.menu import Menu
+from controles.control import Control
 
 def main():
-    menu = Menu()
-    menu.init()
+    controlador = Control()
+    controlador.init()
 
 
 if __name__ == '__main__':

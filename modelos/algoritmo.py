@@ -109,7 +109,7 @@ class Algoritmo:
 
     """——————————————————————04——————————————————————ANCHURA—————————————————————————————————————————————————————————"""
     def anchura(self):
-        print('Recorrido de anchura.')
+        # print('Recorrido de anchura.')
         return ['Recorrido', 'anchura']
 
     """——————————————————————04——————————————————————PROFUNDIDAD—————————————————————————————————————————————————————"""
