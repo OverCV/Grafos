@@ -1,12 +1,12 @@
 """——————————————————————————————————————————————————————
     Menú por consola para operaciones sobre el Grafo.
 ——————————————————————————————————————————————————————"""
-import os, sys, time, random, pygame
+import sys, os, time, random
+# sys.path.append('../')
 
-from data.Grafo import *
-from data.Algoritmos import *
-from helpers.Helpers import *
-
+# from helpers import Helpers
+from modelos.grafo import Grafo
+from modelos.algoritmo import Algoritmo
 
 class Control:
 
@@ -14,7 +14,7 @@ class Control:
 
     def __init__(self):
         self.grafo = Grafo()
-        self.algoritmia = Algoritmos('test', self.grafo)
+        self.algoritmos = Algoritmo('test', self.grafo)
         self.active = True
 
     """—————————————————————————————————————————————SALIDA-PANTALLA——————————————————————————————————————————————————"""
@@ -22,17 +22,18 @@ class Control:
     def load(self):
         self.active = True
         while self.active:
+
             print(
                 "\n▌ OPCIONES"
-                "\n▌ 01 — Ejecución            02 — Ingresar vértice     03 — Ver vértices         04 — Generar vértice   ▐"
-                "\n▌ 05 — Ingresar arista      06 — Generar arista       07 — Ver aristas          08 — Algoritmos        ▐"
-                "\n▌   ∙∙∙   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   ∙∙∙    ▐"
-                "\n▌ 09 — Ordenar ascendente   10 — Grado de vértices    11 — Vértice mayor grado  12 — Promedio (lst ady)▐"
-                "\n▌ 13 — Pozos                14 — Fuentes              15 — Prom. peso aristas   16 — Arista (peso-max) ▐"
-                "\n▌ 17 — Arista (peso-min)    18 — Vértice (num-ady)    19 — Ady. de vértices     20 — Get Grafo         ▐"
-                "\n▌ 21 — Reset Grafo                                                                                     ▐"
+                "\n▌ 01 — Ejecución            02 — Ingresar vértice     03 — Ver vértices         04 — Generar vértice    ▐"
+                "\n▌ 05 — Ingresar arista      06 — Generar arista       07 — Ver aristas          08 — Algoritmos         ▐"
+                "\n▌   ∙∙∙   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   —   ∙∙∙   ∙∙∙     ▐"
+                "\n▌ 09 — Ordenar ascendente   10 — Grado de vértices    11 — Vértice mayor grado  12 — Promedio (lst ady) ▐"
+                "\n▌ 13 — Pozos                14 — Fuentes              15 — Prom. peso aristas   16 — Arista (peso-max)  ▐"
+                "\n▌ 17 — Arista (peso-min)    18 — Vértice (num-ady)    19 — Ady. de vértices     20 — Get Grafo          ▐"
+                "\n▌ 21 — Reset Grafo                                                                                      ▐"
                 # ∙∙∙
-                "\n▌ 00 — Volver                                                                                          ▐"
+                "\n▌ 00 — Volver                                                                                           ▐"
             )
             o = {
                 1: self.exit,                2: self.ingresar_vertice, 3: self.ver_vertices,     4: self.generar_vertice,
@@ -133,14 +134,17 @@ class Control:
             print('Grafo insuficiente.')
             return
 
-        o = { 'p': Algoritmos.prim, 'd': Algoritmos.dijkstra, 'k': Algoritmos.kruskal, 'b': Algoritmos.boruvka }
+        o = {
+            'p': self.algoritmos.prim, 'd': Algoritmos.dijkstra,
+            'k': Algoritmos.kruskal, 'b': Algoritmos.boruvka
+        }
         i = (input('Ingrese el nombre del algoritmo a ejecutar: ').lower())[0]
 
         if i != 'p' and i != 'd' and i != 'k' and i != 'b':
             print('Algoritmo inexistente')
             return
 
-        conjunto = o[i](self.algoritmia)
+        conjunto = o[i](self.algoritmos)
 
         print(conjunto)
 
@@ -160,7 +164,7 @@ class Control:
         }
 
         # Retorno de 02 conjuntos | Conjunto de vértices y Conjunto de aristas.
-        conjuntos = o[i](self.algoritmia)
+        conjuntos = o[i](self.algoritmos)
 
         return conjuntos
 

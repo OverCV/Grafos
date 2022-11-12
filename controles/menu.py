@@ -1,10 +1,15 @@
 """——————————————————————————————————————————————
     Controlador de los distintos componentes.
 ——————————————————————————————————————————————"""
-import sys# , os, time, random, pygame
-from control import Control
-from Interface import *
-from helper import Helpers
+import sys , os, time, random
+# scriptPath = os.path.realpath(os.path.dirname(sys.argv[0]))
+# os.chdir(scriptPath)
+# sys.path.append('../')
+
+from controles.control import Control
+# from Interface import *
+from controles.helpers import Helpers
+
 
 
 class Menu:
@@ -32,7 +37,7 @@ class Menu:
         while True:
             print('▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▜\n' \
                   '▌▓▒░     01. Iniciar     ░▒▓█▓▒░     02. Opciones     ░▒▓█▓▒░     00. Salir     ░▒▓▐\n' \
-                  '▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▟')
+                  '▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▟')    
 
             o = {
                 1: self.run, 2: self.control.load, 0: self.salir
