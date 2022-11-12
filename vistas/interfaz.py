@@ -16,14 +16,14 @@ class Interfaz:
     def __init__(self, menu):
         pygame.font.init()
 
-        self.control = menu  # This activates the graph functionality in time.
+        self.menu = menu  # This activates the graph functionality in real time.
 
         self.size = (1280, 720)  # Screen resolution.
         self.panel = (0, 0)  # The main canvas for the simulation.
         self.grid = []  # All screen positions for all the nodes.
-        self.divs = (12, 7)  # Screen divisions
+        self.divs = (12, 7)  # Screen divisions.
 
-        self.colors = []
+        self.colors = []    # List filled with Helpers colors.
         self.font_SCP = pygame.font.SysFont('Source Code Pro', 30)
 
         self.mp = [(0, 0), False]  # Mouse Position | (x, y), Clicked |
@@ -63,7 +63,6 @@ class Interfaz:
     @staticmethod
     def draw_text(window: pygame.Surface, text: str, aa: bool, fg: tuple,
                   x: int | float, y: int | float, size: int) -> None:
-
         """
         Function to draw text on window.
 
@@ -119,7 +118,7 @@ class Interfaz:
 
         self.grid.append(self.get_grid(self.size[0] * phi, self.size[1]))  # Editado para ver grafo en panel.
 
-        # Ventana
+        # Ventana principal
         pygame.display.set_caption('Proyecto Grafos'),
         window = pygame.display.set_mode(self.size, pygame.RESIZABLE)
         panel = pygame.Rect(0, 0, self.panel[0], self.panel[1])
@@ -168,7 +167,7 @@ class Interfaz:
                 # pygame.draw.rect(window, self.colors[3], simulation_BTN)
                 Helpers.draw_rounded_rect(self, window, simulation_BTN, self.colors[3], 15)
                 self.draw_text(window, 'Simulator', True, self.colors[0], 2 * divs_x, (6 * divs_y), 30)
-                if self.mp[1]:  # Presiona click.
+                if self.mp[1]:  # Presiona clic.
                     self.simulator(window, panel)
 
             if options_BTN.collidepoint(self.mp[0]):  # Si está sobre options.
@@ -224,151 +223,151 @@ class Interfaz:
                     self.size = w_h
         return
 
-    def options(self, window):
+    # def options(self, window):
+    #
+    #     has_sounds = [1, 'Sonido: ONN']
+    #     has_sfx = [1, 'SFX: ONN']
+    #     toggle = ['ON', 'OFF']
+    #     color = self.colors[2]
+    #
+    #     run = True
+    #     while run:
+    #         window.fill(self.colors[1])
+    #
+    #         left_panel = pygame.Rect(0, 0, window.get_width() / 5, window.get_height())  # left | top | width | height #
+    #         pygame.draw.rect(window, self.colors[3], left_panel)
+    #
+    #         right_panel_center_x = (window.get_width() - (window.get_width() / 5)) / 2 + (window.get_width() / 5)
+    #         pygame.draw.line(window, self.colors[2], (right_panel_center_x, 0),
+    #                          (right_panel_center_x, window.get_height()))
+    #
+    #         rp_cx_left = 1 * (window.get_width() - (window.get_width() / 5)) / 4 + (
+    #                     window.get_width() / 5)  # 1/4 de la columna.
+    #         rp_cx_right = 3 * (window.get_width() - (window.get_width() / 5)) / 4 + (
+    #                     window.get_width() / 5)  # 3/4 de la columna
+    #
+    #         # Linea verde, [5].
+    #         pygame.draw.line(window, self.colors[4], (rp_cx_left, 0), (rp_cx_left, window.get_height()), 5)
+    #         # Linea roja, [7].
+    #         pygame.draw.line(window, self.colors[8], (rp_cx_right, 0), (rp_cx_right, window.get_height()), 5)
+    #
+    #         options_x = (window.get_width() / 10) - 80  # Posición - Dimensiones en x (Posibilidad sea doble de fuente).
+    #         options_y = (window.get_height() / 2) - 20  # Posición - Dimensiones en y (fuente 40 -> 40/2).
+    #         self.draw_text(window, 'Options', True, self.colors[0], options_x, options_y, 40)
+    #
+    #         # BOTONES #
+    #         right_panel_divs_y = window.get_height() / 5
+    #
+    #         for i in range(5):
+    #
+    #             over_lp = (window.get_width() / 5) < self.mp[0][0] < right_panel_center_x
+    #             over_rp = right_panel_center_x < self.mp[0][0] < window.get_width()
+    #
+    #             # Líneas negra[0].
+    #             div_mid_y = (i + (1 / 2)) * (((i + 1) * right_panel_divs_y) - (i * right_panel_divs_y))
+    #             pygame.draw.line(window, self.colors[0], (window.get_width() / 5, div_mid_y),
+    #                              (window.get_width(), div_mid_y))
+    #
+    #             hx, hy = (window.get_width() - (window.get_width() / 5)) * 0.4, (window.get_height() / 6) * 0.6
+    #             if i == 0:
+    #                 over_module = 0.5 * div_mid_y < self.mp[0][1] < 1.5 * div_mid_y
+    #                 # Rectángulos + Texto.
+    #                 sound_BTN = pygame.Rect(rp_cx_left - hx / 2, div_mid_y - hy / 2, hx,
+    #                                         hy)  # left | top | width | height #
+    #                 sfx_BTN = pygame.Rect(rp_cx_right - hx / 2, div_mid_y - hy / 2, hx,
+    #                                       hy)  # left | top | width | height #
+    #
+    #                 ## Dibujado sobre el panel derecho ##
+    #                 pygame.draw.rect(window, color, sound_BTN)
+    #                 if over_lp and over_module:
+    #                     color = self.colors[3]
+    #                     pygame.draw.rect(window, color, sound_BTN)
+    #
+    #                     if self.mp[1]:
+    #                         self.mp[1] = False  # Cambiamos el atributo de clic a falso para que no quede infinito.
+    #                         # Adición de switch para cambio de estado.
+    #                         has_sounds[0] += (0.20)
+    #                         if int(has_sounds[0]) % 2 == 0:
+    #                             has_sounds[1] = 'Sonido: ' + toggle[0]
+    #                             color = self.colors[4]  # green.
+    #                         else:
+    #                             has_sounds[1] = 'Sonido: ' + toggle[1]
+    #                             color = self.colors[8]  # red.
+    #                 self.draw_text(window, has_sounds[1], True, self.colors[0], rp_cx_left - hx / 4, div_mid_y - hy / 4,
+    #                                30)
+    #
+    #                 ## Dibujado sobre el panel derecho ##
+    #                 pygame.draw.rect(window, color, sfx_BTN)
+    #                 if over_rp and over_module:
+    #                     color = self.colors[3]
+    #                     pygame.draw.rect(window, color, sfx_BTN)
+    #
+    #                     if over_rp and over_module:
+    #                         color = self.colors[3]
+    #                         pygame.draw.rect(window, color, sfx_BTN)
+    #
+    #                         if self.mp[1]:
+    #                             self.mp[1] = False  # Cambiamos el atributo de clic a falso para que no quede infinito.
+    #                             # Adición de switch para cambio de estado.
+    #                             has_sfx[0] += (0.20)
+    #                             if int(has_sfx[0]) % 2 == 0:
+    #                                 has_sfx[1] = 'SFX: ' + toggle[0]
+    #                                 color = self.colors[4]  # green.
+    #                             else:
+    #                                 has_sfx[1] = 'SFX: ' + toggle[1]
+    #                                 color = self.colors[8]  # red.
+    #                 self.draw_text(window, has_sfx[1], True, self.colors[0], rp_cx_right - hx / 4, div_mid_y - hy / 4,
+    #                                30)
+    #
+    #                 # Si se modifica el atributo del texto en tamaño, ha de modificarse la diferencia en posición.
+    #
+    #             self.mp[0] = pygame.mouse.get_pos()  # Actualiza la posición del cursor.
+    #             self.mp[1] = pygame.mouse.get_pressed()[0]  # Presiona el click izquierdo?
+    #
+    #             # pygame.draw.line(window, self.colors[2], (window.get_width()/5, i*right_panel_divs_y),
+    #             #                  (window.get_width(), i*right_panel_divs_y))
+    #
+    #         # UPDATE + End of the function.
+    #         pygame.display.update()
+    #         self.clock.tick(self.FPS)
+    #
+    #         for event in pygame.event.get():
+    #             if event.type == pygame.QUIT:
+    #                 run = False
+    #             if event.type == KEYDOWN:
+    #                 if event.key == K_ESCAPE:
+    #                     run = False
+    #             if event.type == VIDEORESIZE:
+    #                 w_h = (event.w, event.h)
+    #                 window = pygame.display.set_mode(w_h, pygame.RESIZABLE)
+    #                 self.size = w_h
+    #     return
 
-        has_sounds = [1, 'Sonido: ONN']
-        has_sfx = [1, 'SFX: ONN']
-        toggle = ['ON', 'OFF']
-        color = self.colors[2]
-
-        run = True
-        while run:
-            window.fill(self.colors[1])
-
-            left_panel = pygame.Rect(0, 0, window.get_width() / 5, window.get_height())  # left | top | width | height #
-            pygame.draw.rect(window, self.colors[3], left_panel)
-
-            right_panel_center_x = (window.get_width() - (window.get_width() / 5)) / 2 + (window.get_width() / 5)
-            pygame.draw.line(window, self.colors[2], (right_panel_center_x, 0),
-                             (right_panel_center_x, window.get_height()))
-
-            rp_cx_left = 1 * (window.get_width() - (window.get_width() / 5)) / 4 + (
-                        window.get_width() / 5)  # 1/4 de la columna.
-            rp_cx_right = 3 * (window.get_width() - (window.get_width() / 5)) / 4 + (
-                        window.get_width() / 5)  # 3/4 de la columna
-
-            # Linea verde, [5].
-            pygame.draw.line(window, self.colors[4], (rp_cx_left, 0), (rp_cx_left, window.get_height()), 5)
-            # Linea roja, [7].
-            pygame.draw.line(window, self.colors[8], (rp_cx_right, 0), (rp_cx_right, window.get_height()), 5)
-
-            options_x = (window.get_width() / 10) - 80  # Posición - Dimensiones en x (Posibilidad sea doble de fuente).
-            options_y = (window.get_height() / 2) - 20  # Posición - Dimensiones en y (fuente 40 -> 40/2).
-            self.draw_text(window, 'Options', True, self.colors[0], options_x, options_y, 40)
-
-            # BOTONES #
-            right_panel_divs_y = window.get_height() / 5
-
-            for i in range(5):
-
-                over_lp = (window.get_width() / 5) < self.mp[0][0] < right_panel_center_x
-                over_rp = right_panel_center_x < self.mp[0][0] < window.get_width()
-
-                # Líneas negra[0].
-                div_mid_y = (i + (1 / 2)) * (((i + 1) * right_panel_divs_y) - (i * right_panel_divs_y))
-                pygame.draw.line(window, self.colors[0], (window.get_width() / 5, div_mid_y),
-                                 (window.get_width(), div_mid_y))
-
-                hx, hy = (window.get_width() - (window.get_width() / 5)) * 0.4, (window.get_height() / 6) * 0.6
-                if i == 0:
-                    over_module = 0.5 * div_mid_y < self.mp[0][1] < 1.5 * div_mid_y
-                    # Rectángulos + Texto.
-                    sound_BTN = pygame.Rect(rp_cx_left - hx / 2, div_mid_y - hy / 2, hx,
-                                            hy)  # left | top | width | height #
-                    sfx_BTN = pygame.Rect(rp_cx_right - hx / 2, div_mid_y - hy / 2, hx,
-                                          hy)  # left | top | width | height #
-
-                    ## Dibujado sobre el panel derecho ##
-                    pygame.draw.rect(window, color, sound_BTN)
-                    if over_lp and over_module:
-                        color = self.colors[3]
-                        pygame.draw.rect(window, color, sound_BTN)
-
-                        if self.mp[1]:
-                            self.mp[1] = False  # Cambiamos el atributo de clic a falso para que no quede infinito.
-                            # Adición de switch para cambio de estado.
-                            has_sounds[0] += (0.20)
-                            if int(has_sounds[0]) % 2 == 0:
-                                has_sounds[1] = 'Sonido: ' + toggle[0]
-                                color = self.colors[4]  # green.
-                            else:
-                                has_sounds[1] = 'Sonido: ' + toggle[1]
-                                color = self.colors[8]  # red.
-                    self.draw_text(window, has_sounds[1], True, self.colors[0], rp_cx_left - hx / 4, div_mid_y - hy / 4,
-                                   30)
-
-                    ## Dibujado sobre el panel derecho ##
-                    pygame.draw.rect(window, color, sfx_BTN)
-                    if over_rp and over_module:
-                        color = self.colors[3]
-                        pygame.draw.rect(window, color, sfx_BTN)
-
-                        if over_rp and over_module:
-                            color = self.colors[3]
-                            pygame.draw.rect(window, color, sfx_BTN)
-
-                            if self.mp[1]:
-                                self.mp[1] = False  # Cambiamos el atributo de clic a falso para que no quede infinito.
-                                # Adición de switch para cambio de estado.
-                                has_sfx[0] += (0.20)
-                                if int(has_sfx[0]) % 2 == 0:
-                                    has_sfx[1] = 'SFX: ' + toggle[0]
-                                    color = self.colors[4]  # green.
-                                else:
-                                    has_sfx[1] = 'SFX: ' + toggle[1]
-                                    color = self.colors[8]  # red.
-                    self.draw_text(window, has_sfx[1], True, self.colors[0], rp_cx_right - hx / 4, div_mid_y - hy / 4,
-                                   30)
-
-                    # Si se modifica el atributo del texto en tamaño, ha de modificarse la diferencia en posición.
-
-                self.mp[0] = pygame.mouse.get_pos()  # Actualiza la posición del cursor.
-                self.mp[1] = pygame.mouse.get_pressed()[0]  # Presiona el click izquierdo?
-
-                # pygame.draw.line(window, self.colors[2], (window.get_width()/5, i*right_panel_divs_y),
-                #                  (window.get_width(), i*right_panel_divs_y))
-
-            # UPDATE + End of the function.
-            pygame.display.update()
-            self.clock.tick(self.FPS)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        run = False
-                if event.type == VIDEORESIZE:
-                    w_h = (event.w, event.h)
-                    window = pygame.display.set_mode(w_h, pygame.RESIZABLE)
-                    self.size = w_h
-        return
-
-    def load_json(self, window):
-        i = 3
-        while True:
-            window.fill(self.colors[1])
-
-            x, y = self.size[0] / 2, self.size[1] / 3
-            txt = 'back in 0' + str(i) + ' ...'
-            # self.draw_text(window, '', self.colors[8], self.font_SCP, 20, 20)
-            self.draw_text(window, 'json loaded', True, self.colors[0], 20, 20, 30)
-            self.draw_text(window, txt, True, self.colors[0], x, 2 * y, 30)
-
-            pygame.display.update()
-            self.clock.tick(self.FPS)
-
-            # Tiempo de lectura.
-            time.sleep(1)
-            i -= 1
-            if i == 0:
-                break
-        return
+    # def load_json(self, window):
+    #     i = 3
+    #     while True:
+    #         window.fill(self.colors[1])
+    #
+    #         x, y = self.size[0] / 2, self.size[1] / 3
+    #         txt = 'back in 0' + str(i) + ' ...'
+    #         # self.draw_text(window, '', self.colors[8], self.font_SCP, 20, 20)
+    #         self.draw_text(window, 'json loaded', True, self.colors[0], 20, 20, 30)
+    #         self.draw_text(window, txt, True, self.colors[0], x, 2 * y, 30)
+    #
+    #         pygame.display.update()
+    #         self.clock.tick(self.FPS)
+    #
+    #         # Tiempo de lectura.
+    #         time.sleep(1)
+    #         i -= 1
+    #         if i == 0:
+    #             break
+    #     return
 
     def get_grid(self, w, h):
         div_x, div_y = self.divs[0], self.divs[1]
         # (w / div_x, h / div_y)
-        plane = []  # Plane contiene los puntos en el plano a hacer las líneas (por ejemplo)
+        plano = []  # Contiene los puntos (div_x[n], div_y[n]) en el plano para hacer las líneas (por ejemplo)
 
         # Al hacer que vaya desde (div_x - 1) o (div_y - 1) se elimina la posibilidad de elegir la última casilla borde.
         for i in range(div_x - 1):
@@ -376,13 +375,13 @@ class Interfaz:
                 x = ((w / div_x) * (i + 1)).__round__(2)
                 y = ((h / div_y) * (j + 1)).__round__(2)
 
-                plane.append((x, y))
-        return plane
+                plano.append((x, y))
+        return plano
 
         # Configuración inicial | Comentar o des-comentar según se desee
         # self.set_size()
         # self.set_divs()
-
+        #
         # response = input('¿Bajos recursos? (LDM): ').lower()[0]
         # if response == 's':
         #     self.LDM = True
@@ -462,7 +461,7 @@ class Interfaz:
         pygame.display.update()
 
     def search_casita(self, grid, vertices):
-        vertex = self.control.grafo.get_lista_vertices()
+        vertex = self.menu.grafo.get_lista_vertices()
 
         for i in range(len(vertex)):
             if vertex[i].get_dato() == 'Casita':
@@ -522,16 +521,16 @@ class Interfaz:
                 if 0 < i < 5:
                     if over:
                         if clicked[0]:
-                            conjunto_v = self.control.algoritmo_i(i)[0]
-                            conjunto_a = self.control.algoritmo_i(i)[1]
+                            conjunto_v = self.menu.algoritmo_i(i)[0]
+                            conjunto_a = self.menu.algoritmo_i(i)[1]
 
                     pygame.draw.rect(window, color, panel)
 
                 elif 5 < i < 10:
                     if over:
                         if clicked[0]:
-                            conjunto_v = self.control.algoritmo_i(i)[0]
-                            conjunto_a = self.control.algoritmo_i(i)[1]
+                            conjunto_v = self.menu.algoritmo_i(i)[0]
+                            conjunto_a = self.menu.algoritmo_i(i)[1]
 
                 else:
                     color = indigo_100
@@ -550,7 +549,7 @@ class Interfaz:
     def animate_path(self, window, path, v_pos, grid):
 
         v_i = self.reach[1]  # Obtención del índice para cuál será la arista inicial (sea path su iterando).
-        v_list = self.control.grafo.get_lista_vertices()
+        v_list = self.menu.grafo.get_lista_vertices()
 
         if v_i == len(v_list) - 1:
             self.reach[0] = True
@@ -632,7 +631,7 @@ class Interfaz:
         emerald_200 = Helpers.get_color('emerald', 200)
         color = indigo_100
 
-        aristas = self.control.grafo.get_lista_aristas()
+        aristas = self.menu.grafo.get_lista_aristas()
 
         if id == 1:
             # self.draw_path
@@ -666,7 +665,7 @@ class Interfaz:
         return True
 
     def get_i_vertice(self, arista, lugar):
-        vertices = self.control.grafo.get_lista_vertices()
+        vertices = self.menu.grafo.get_lista_vertices()
 
         if lugar == 'origen':
             for i in range(len(vertices)):
@@ -707,7 +706,7 @@ class Interfaz:
         """
         indigo_300 = Helpers.get_color('indigo', 300)
         emerald_300 = Helpers.get_color('emerald', 300)
-        v = self.control.grafo.get_lista_vertices()
+        v = self.menu.grafo.get_lista_vertices()
 
         # | vértice | x | y | #
         vertices = []
@@ -738,7 +737,7 @@ class Interfaz:
         # emerald_300 = Helpers.get_color('emerald', 300)
 
         red_300 = Helpers.get_color('red', 300)
-        list_vertex = self.control.grafo.get_lista_vertices()
+        list_vertex = self.menu.grafo.get_lista_vertices()
         j = 0
 
         for i in range(len(grid)):
@@ -809,7 +808,7 @@ class Interfaz:
         Función que toma el (grid) total, evalúa cada punto y de ser True lo cuenta con el fín de retornar si es posible
         o no con la cantidad de espacios disponibles que debería generar luego para los puntos (dots).
         """
-        length = len(self.control.grafo.get_lista_vertices())
+        length = len(self.menu.grafo.get_lista_vertices())
         c = 0
         for item in self.intersects:
             if item:  # Básicamente, al valer (True) adiciona el contador.
