@@ -18,16 +18,19 @@ class Interfaz:
 
         self.menu = menu  # This activates the graph functionality in real time.
 
-        self.size = (1280, 720)  # Screen resolution.
-        self.panel = (0, 0)  # The main canvas for the simulation.
-        self.grid = []  # All screen positions for all the nodes.
-        self.divs = (12, 7)  # Screen divisions.
+        self.size = (1280, 720)  # Dimensiones para la ventana de Pygame.
+        self.panel = (0, 0)  # El lienzo base para la simulación (dimensiones/tamaño).
+        self.grid = []  # Todas las posiciones para todos los vértices (lista de tuplas).
+        self.divs = (12, 7)  # Divisiones de la ventana.
+        self.intersects = [] # Lista de boleanos que permiten posicionar los nodos en la rejilla.
+        # Dos valores, el [i, j] el i es si recorrió todo, el j es para cada viaje entre los nodos.
+        self.reach = [False, 0, 0]
 
         self.colors = []    # List filled with Helpers colors.
         self.font_SCP = pygame.font.SysFont('Source Code Pro', 30)
 
         self.mp = [(0, 0), False]  # Mouse Position | (x, y), Clicked |
-        self.FPS = 60  # FPS ratio.
+        self.FPS = 60  # Frames Per Second ratio.
         self.clock = pygame.time.Clock()
 
     """
@@ -40,16 +43,7 @@ class Interfaz:
     self.LDM = False
     self.loaded_json = False
     """  # old attributes
-    """
-    def set_size(self):
-        o = { 1: (720, 400), 2: (720, 576), 3: (1280, 720), 4: (1920, 1080),
-              5: (2048, 1080), 6: (2560, 1440), 7: (3840, 2160) }
-        i = Helpers.read_int('| [1] (720, 400) | [2] (720, 576) | [3] (1280, 720) '
-                             '| [4] (1920, 1080) | [5] (2560, 1440) | [6] (3840, 2160) | [7] (3840, 2160) |\n',
-                             '| Pantalla inválida |', 1, 7)
-        self.size = o[i]
-        print('Pantalla redimensionada.')
-"""  # Set screen
+
     """
     def set_divs(self):
         infty = sys.maxsize
@@ -58,7 +52,7 @@ class Interfaz:
 
         self.divs = (x, y)
         print('Divisiones creadas.')
-"""  # Set divs
+    """  # Set divs
 
     @staticmethod
     def draw_text(window: pygame.Surface, text: str, aa: bool, fg: tuple,
@@ -90,13 +84,6 @@ class Interfaz:
         txt_rect.topcenter = (x, y)
         surface.blit(txt_obj, txt_rect)
 
-    # def draw_text(self, surface, text, size, pos):
-    #     blue_900 = Helpers.get_color('blue', 900)
-    #     font = pygame.font.SysFont('Consolas', size)
-    #
-    #     text_surface = font.render(text, True, blue_900)
-    #
-    #     surface.blit(text_surface, pos)
 
     """—————————————————————————————————————————————MÉTODOS——————————————————————————————————————————————————————————"""
 
@@ -114,14 +101,16 @@ class Interfaz:
             for i in range(len(colors)):
                 self.colors.append(Helpers.get_color(colors[i], shades[i]))
 
+        # Esta va a ser la ventana del simulador (con el grafo).
         self.panel = (self.size[0] * phi, self.size[1])  # Panel con dimensión en (x) de proporción aurea.
 
         self.grid.append(self.get_grid(self.size[0] * phi, self.size[1]))  # Editado para ver grafo en panel.
 
         # Ventana principal
-        pygame.display.set_caption('Proyecto Grafos'),
+        pygame.display.set_caption('Librerías ACME'),
         window = pygame.display.set_mode(self.size, pygame.RESIZABLE)
         panel = pygame.Rect(0, 0, self.panel[0], self.panel[1])
+
 
         self.draw_text(window, 'main menu', True, self.colors[0], 00, 00, 20)  # black.
 
@@ -132,20 +121,21 @@ class Interfaz:
             self.mp[0] = pygame.mouse.get_pos()
             self.mp[1] = pygame.mouse.get_pressed()[0]
 
+            # Definir posiciones para colocar los botones.
             divs_x, divs_y = self.size[0] / 13, self.size[1] / 7
             x5, y9 = self.size[0] / 5, self.size[1] / 9
 
+            #NI: Es para pintar el logo en una posición dentro de la ventana principal.
             window.blit(logo, ((4 * divs_x) - (x5 / 2), (divs_y) - (y9 / 2)))
 
             # Se busca dar ajuste a los botones del menú inicial, se itera la posición menos su longitud en (x, y).
-            simulation_BTN = pygame.Rect((3 * divs_x) - (x5 / 2), (6 * divs_y) - (y9 / 2), x5,
-                                         y9)  # left | top | width | height
 
-            options_BTN = pygame.Rect((6 * divs_x) - (x5 / 2), (6 * divs_y) - (y9 / 2), x5,
-                                      y9)  # left | top | width | height
+            # !Único botón para dar la simulación.
+            simulation_BTN = pygame.Rect((3 * divs_x) - (x5 / 2), (6 * divs_y) - (y9 / 2), x5, y9)  # left | top | width | height
 
-            load_json_BTN = pygame.Rect((9 * divs_x) - (x5 / 2), (6 * divs_y) - (y9 / 2), x5,
-                                        y9)  # left | top | width | height
+            # BOTÓN OPCIONES ELIMINADO
+
+            # load_json_BTN = pygame.Rect((9 * divs_x) - (x5 / 2), (6 * divs_y) - (y9 / 2), x5, y9)  # left | top | width | height
 
             # sim =     # neutral_100
             # pygame.draw.rect(window, self.colors[2], simulation_BTN)
@@ -154,13 +144,13 @@ class Interfaz:
 
             # opt =    # neutral_100
             # pygame.draw.rect(window, self.colors[2], options_BTN)
-            Helpers.draw_rounded_rect(self, window, options_BTN, self.colors[2], 15)
-            self.draw_text(window, 'Options', True, self.colors[0], 5 * divs_x, (6 * divs_y), 30)
+            # Helpers.draw_rounded_rect(self, window, options_BTN, self.colors[2], 15)
+            # self.draw_text(window, 'Options', True, self.colors[0], 5 * divs_x, (6 * divs_y), 30)
 
             # json =  # neutral_100
             # pygame.draw.rect(window, self.colors[2], load_json_BTN)
-            Helpers.draw_rounded_rect(self, window, load_json_BTN, self.colors[2], 15)
-            self.draw_text(window, 'Load JSON', True, self.colors[0], 8 * divs_x, (6 * divs_y), 30)
+            # [01] Helpers.draw_rounded_rect(self, window, load_json_BTN, self.colors[2], 15)
+            # self.draw_text(window, 'Load JSON', True, self.colors[0], 8 * divs_x, (6 * divs_y), 30)
 
             if simulation_BTN.collidepoint(self.mp[0]):  # Si está sobre simulator.
                 # neutral_200
@@ -170,25 +160,27 @@ class Interfaz:
                 if self.mp[1]:  # Presiona clic.
                     self.simulator(window, panel)
 
-            if options_BTN.collidepoint(self.mp[0]):  # Si está sobre options.
-                # neutral_200
-                # pygame.draw.rect(window, self.colors[3], options_BTN)
-                Helpers.draw_rounded_rect(self, window, options_BTN, self.colors[3], 15)
-                self.draw_text(window, 'Options', True, self.colors[0], 5 * divs_x, (6 * divs_y), 30)
-                if self.mp[1]:  # Presiona click.
-                    self.options(window)
+            # if options_BTN.collidepoint(self.mp[0]):  # Si está sobre options.
+            #     # neutral_200
+            #     # pygame.draw.rect(window, self.colors[3], options_BTN)
+            #     Helpers.draw_rounded_rect(self, window, options_BTN, self.colors[3], 15)
+            #     self.draw_text(window, 'Options', True, self.colors[0], 5 * divs_x, (6 * divs_y), 30)
+            #     if self.mp[1]:  # Presiona click.
+            #         self.options(window)
 
-            if load_json_BTN.collidepoint(self.mp[0]):  # Si está sobre load_json.
-                # neutral_200
-                # pygame.draw.rect(window, self.colors[3], load_json_BTN)
-                Helpers.draw_rounded_rect(self, window, load_json_BTN, self.colors[3], 15)
-                self.draw_text(window, 'Load JSON', True, self.colors[0], 8 * divs_x, (6 * divs_y), 30)
-                if self.mp[1]:  # Presiona click.
-                    self.load_json(window)
+            # [02] if load_json_BTN.collidepoint(self.mp[0]):  # Si está sobre load_json.
+            #     # neutral_200
+            #     # pygame.draw.rect(window, self.colors[3], load_json_BTN)
+            #     Helpers.draw_rounded_rect(self, window, load_json_BTN, self.colors[3], 15)
+            #     self.draw_text(window, 'Load JSON', True, self.colors[0], 8 * divs_x, (6 * divs_y), 30)
+            #     if self.mp[1]:  # Presiona click.
+            #         self.load_json(window)
 
+            #! Sin esto no se actualiza. !#
             pygame.display.update()
             self.clock.tick(self.FPS)
 
+            #NI: Sirve para accciones específicas del usuario, y que básicamente no se crashee el programa.
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -365,6 +357,10 @@ class Interfaz:
     #     return
 
     def get_grid(self, w, h):
+        """
+        #! A partir de unas dimensiones en X, Y, se generan una serie de puntos (tuplas) con cada posición dentro de la
+        ventana específica (panel) para a partir de estas tuplas poder dar posicionamiento a los nodos/vértices.
+        """
         div_x, div_y = self.divs[0], self.divs[1]
         # (w / div_x, h / div_y)
         plano = []  # Contiene los puntos (div_x[n], div_y[n]) en el plano para hacer las líneas (por ejemplo)
@@ -376,6 +372,13 @@ class Interfaz:
                 y = ((h / div_y) * (j + 1)).__round__(2)
 
                 plano.append((x, y))
+        """
+        Este return contiene una lista de tuplas con las posibles posiciones de los vértices.
+        Ejemplo:
+        [ 
+            (200, 50), ... (200, 50), (200, 50), (200, 50), (200, 50), (200, 50)... (x_final, y_final)
+        ]
+        """
         return plano
 
         # Configuración inicial | Comentar o des-comentar según se desee
@@ -394,7 +397,7 @@ class Interfaz:
         # Imágenes
         # images = self.load_images()
         walker_move = pygame.sprite.Group()
-        walker_move.add(self.walker)
+        # walker_move.add(self.walker)
 
         neutral_50 = Helpers.get_color('neutral', 50)
         zinc_200 = Helpers.get_color('zinc', 200)
@@ -421,13 +424,13 @@ class Interfaz:
             self.create_intersects_nice(grid)  # Función de uso único en la carga de interface.
 
         # CREACIÓN DE VÉRTICES Y ARISTAS #
-        vertices = self.get_vertex(grid)
+        vertices = self.get_vertex(grid) #! Lista con posiciones (tuplas) dadas según el posicionamiento de los booleanos.
         self.draw_lines(window, vertices, grid, 0)
 
         if self.LDM:
             self.draw_circles(window, grid)
         else:
-            self.draw_vertex(window, grid)  # Forma NO ÓPTIMA, ver si antes guardar esa lista y luego imprimir.
+            self.draw_libraries(window, grid)  # Forma NO ÓPTIMA, ver si antes guardar esa lista y luego imprimir.
 
         # self.draw_all_circles(window, grid)
         # Tenemos el grid, hagamos lo propuesto 19 líneas antes.
@@ -436,10 +439,11 @@ class Interfaz:
             if self.LDM:
                 self.draw_circles(window, grid)
             else:
-                self.draw_vertex(window, grid)  # Forma NO ÓPTIMA, ver si antes guardar esa lista y luego imprimir.
+                self.draw_libraries(window, grid)  # Forma NO ÓPTIMA, ver si antes guardar esa lista y luego imprimir.
 
             if mouse_click[0] and (self.reach[0] is False):
                 # Hay camino, clic + Sin fin de recorrido
+                #! Función lógica más potente.
                 self.animate_path(window, camino, vertices, grid)
 
         # Finalidad de cuando esté activo, se pueda repetir el ciclo para el recorrido de vértices.
@@ -447,8 +451,8 @@ class Interfaz:
         # tornarse a 0 para resetear el ciclo de iterators.
         # Reseteo de valores del walker, la idea es que se restablezca para el siguiente algoritmo.
         if (mouse_click[0] is False) and self.reach[0]:
-            pos = self.search_casita(grid, vertices)
-            self.walker.set_pos(pos)
+            casita_pos = self.search_casita(grid, vertices)
+            self.walker.set_pos(casita_pos)
             self.reach[0] = False
             self.reach[1] = 0
             self.reach[2] = 0
@@ -586,7 +590,7 @@ class Interfaz:
 
     def animate_pair(self, window, path, origen_g, destino_g):
         # VARIABLE GLOBAL REACH: Esta tendría un boolean y el índice de la arista, hasta que llegue se activa y pasa
-        # para la siguiente posición que implica la siguiente arista del conjunto recorrido de aristas
+        # para la siguiente posición que implica la siguiente arista del conjunto recorrido de aristas.
         j = self.reach[2]
         # position = (10, 10)
 
@@ -731,7 +735,7 @@ class Interfaz:
 
         return vertices
 
-    def draw_vertex(self, window, grid):
+    def draw_libraries(self, window, grid):
         library_off = self.load_images()[0][0]
         library_on = self.load_images()[0][1]
         # emerald_300 = Helpers.get_color('emerald', 300)
